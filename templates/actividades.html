@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Actividades de evaluación{% endblock %}
+{% block content %}
+<h1>Actividades de evaluación</h1>
+
+<div class="toolbar">
+    <form method="get" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <select name="bloque_id" onchange="this.form.submit()">
+            <option value="">Todos los bloques</option>
+            {% for b in bloques %}
+            <option value="{{ b.id }}" {{ 'selected' if bloque_id == b.id else '' }}>{{ b.nombre }}</option>
+            {% endfor %}
+        </select>
+        <select name="area_id" onchange="this.form.submit()">
+            <option value="">Todas las áreas</option>
+            {% for a in areas %}
+            <option value="{{ a.id }}" {{ 'selected' if area_id == a.id else '' }}>{{ a.nombre }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <div style="display:flex; gap:8px;">
+        <a class="btn btn-secondary" href="{{ url_for('actividad_plantilla', bloque_id=bloque_id, area_id=area_id) }}">+ Generar plantilla</a>
+        <a class="btn" href="{{ url_for('actividad_nueva', bloque_id=bloque_id, area_id=area_id) }}">+ Nueva actividad</a>
+    </div>
+</div>
+
+{% for grupo in grupos %}
+<div class="card">
+    <h2>{{ grupo.bloque.nombre }}</h2>
+    {% if not grupo.areas %}
+    <p style="color:#888">No hay actividades registradas en este bloque.</p>
+    {% endif %}
+    {% for area_grupo in grupo.areas %}
+    <h3 style="margin-top:18px; color:#444; font-size:15px; border-bottom:1px solid var(--borde); padding-bottom:4px;">
+        {{ area_grupo.area_nombre }}
+    </h3>
+    <table>
+        <tr><th>Fecha</th><th>Actividad</th><th>Tema</th><th>Valor</th><th></th></tr>
+        {% for a in area_grupo.actividades %}
+        <tr>
+            <td>{{ a.fecha_ejecucion or '—' }}</td>
+            <td>{{ a.nombre }}</td>
+            <td>{{ a.tema or '—' }}</td>
+            <td>{{ a.valor_total|numfmt }}</td>
+            <td>
+                <a class="btn btn-sm" href="{{ url_for('actividad_calificar', id=a.id) }}">Calificar</a>
+                <a class="btn btn-sm btn-secondary" href="{{ url_for('actividad_editar', id=a.id) }}">Editar</a>
+                <a class="btn btn-sm btn-danger" href="{{ url_for('actividad_eliminar', id=a.id) }}"
+                   onclick="return confirm('¿Eliminar esta actividad y sus calificaciones?');">Eliminar</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% endfor %}
+</div>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Áreas curriculares{% endblock %}
+{% block content %}
+<h1>Áreas curriculares</h1>
+<p>La gestión de áreas (editar o eliminar) se realiza ahora desde
+   <a href="{{ url_for('configuracion') }}">Configuración</a>.</p>
+<div class="card">
+<table>
+    <tr><th>#</th><th>Área</th><th>Código</th><th>Estado</th></tr>
+    {% for a in areas %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ a.nombre }}</td>
+        <td>{{ a.codigo }}</td>
+        <td><span class="badge badge-{{ a.estado }}">{{ a.estado }}</span></td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

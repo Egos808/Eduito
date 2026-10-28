@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Nueva actividad{% endblock %}
+{% block content %}
+<h1>Nueva actividad de evaluación</h1>
+<div class="card">
+<form method="post" id="form-actividad">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Bloque</label>
+            <select name="bloque_id" required>
+                {% for b in bloques %}
+                <option value="{{ b.id }}" {{ 'selected' if default_bloque_id == b.id else '' }}>{{ b.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Área</label>
+            <select name="area_id" required>
+                {% for a in areas %}
+                <option value="{{ a.id }}" {{ 'selected' if default_area_id == a.id else '' }}>{{ a.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Nombre de la actividad</label>
+            <input type="text" name="nombre" required placeholder="Ej. Los colores">
+        </div>
+        <div class="form-group">
+            <label>Tema</label>
+            <input type="text" name="tema" placeholder="Ej. Colores primarios">
+        </div>
+        <div class="form-group">
+            <label>Fecha de ejecución</label>
+            <input type="date" name="fecha_ejecucion" required>
+        </div>
+    </div>
+
+    <h3>Aspectos a calificar</h3>
+    <p style="font-size:13px;color:#666">El valor total de la actividad se calcula automáticamente sumando el valor de cada aspecto.</p>
+    <div class="aspectos-list" id="aspectos-list">
+        <div class="aspecto-row">
+            <input type="text" name="aspecto_nombre" placeholder="Nombre del aspecto (ej. Aspecto 1)" required>
+            <input type="number" name="aspecto_valor" placeholder="Valor" step="0.01" required>
+        </div>
+        <div class="aspecto-row">
+            <input type="text" name="aspecto_nombre" placeholder="Nombre del aspecto (ej. Aspecto 2)">
+            <input type="number" name="aspecto_valor" placeholder="Valor" step="0.01">
+        </div>
+    </div>
+    <button type="button" class="btn btn-sm btn-secondary" id="btn-add-aspecto">+ Agregar aspecto</button>
+
+    <div class="actions-row">
+        <button class="btn" type="submit">Guardar y continuar a calificar</button>
+        <a class="btn btn-secondary" href="{{ url_for('actividades_lista') }}">Cancelar</a>
+    </div>
+</form>
+</div>
+
+<script>
+document.getElementById('btn-add-aspecto').addEventListener('click', function () {
+    const list = document.getElementById('aspectos-list');
+    const row = document.createElement('div');
+    row.className = 'aspecto-row';
+    row.innerHTML = '<input type="text" name="aspecto_nombre" placeholder="Nombre del aspecto">' +
+                    '<input type="number" name="aspecto_valor" placeholder="Valor" step="0.01">';
+    list.appendChild(row);
+});
+</script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Bloques académicos{% endblock %}
+{% block content %}
+<h1>Bloques académicos</h1>
+<p>El sistema maneja los cuatro bloques fijos del ciclo académico. Aquí puedes definir sus fechas de inicio y fin.</p>
+
+<div class="card">
+<table>
+    <tr><th>Bloque</th><th>Fecha inicio</th><th>Fecha fin</th><th></th></tr>
+    {% for b in bloques %}
+    <tr>
+        <form method="post">
+        <td>{{ b.nombre }}</td>
+        <td><input type="date" name="fecha_inicio" value="{{ b.fecha_inicio or '' }}"></td>
+        <td><input type="date" name="fecha_fin" value="{{ b.fecha_fin or '' }}"></td>
+        <td>
+            <input type="hidden" name="bloque_id" value="{{ b.id }}">
+            <button class="btn btn-sm" type="submit">Guardar</button>
+        </td>
+        </form>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+{% endblock %}

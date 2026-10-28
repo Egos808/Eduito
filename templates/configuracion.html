@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Configuración{% endblock %}
+{% block content %}
+<h1>Configuración</h1>
+
+<div class="card">
+    <h2>Datos del docente y del establecimiento</h2>
+    <p style="font-size:13px;color:#666">Estos datos aparecen en el membrete de los reportes impresos.</p>
+    <form method="post">
+        <input type="hidden" name="accion" value="datos">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Nombre del docente</label>
+                <input type="text" name="nombre_docente" value="{{ cfg.get('nombre_docente','') }}" required>
+            </div>
+            <div class="form-group">
+                <label>Nombre de la directora / director del establecimiento</label>
+                <input type="text" name="nombre_directora" value="{{ cfg.get('nombre_directora','') }}">
+            </div>
+            <div class="form-group">
+                <label>Grado</label>
+                <input type="text" name="grado" value="{{ cfg.get('grado','') }}" required>
+            </div>
+            <div class="form-group">
+                <label>Sección</label>
+                <input type="text" name="seccion" value="{{ cfg.get('seccion','') }}" required>
+            </div>
+            <div class="form-group">
+                <label>Ciclo escolar</label>
+                <input type="text" name="ciclo_escolar" value="{{ cfg.get('ciclo_escolar','') }}" placeholder="Ej. 2026">
+            </div>
+        </div>
+        <h3 style="margin-top:10px">Membrete institucional</h3>
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Línea 1 (Ministerio)</label>
+                <input type="text" name="ministerio" value="{{ cfg.get('ministerio','') }}">
+            </div>
+            <div class="form-group">
+                <label>Línea 2 (Dirección departamental)</label>
+                <input type="text" name="direccion_departamental" value="{{ cfg.get('direccion_departamental','') }}">
+            </div>
+            <div class="form-group">
+                <label>Línea 3 (Supervisión educativa)</label>
+                <input type="text" name="supervision_educativa" value="{{ cfg.get('supervision_educativa','') }}">
+            </div>
+            <div class="form-group">
+                <label>Línea 4 (Distrito escolar)</label>
+                <input type="text" name="distrito_escolar" value="{{ cfg.get('distrito_escolar','') }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Nombre del establecimiento (línea subrayada)</label>
+            <input type="text" name="nombre_establecimiento" value="{{ cfg.get('nombre_establecimiento','') }}">
+        </div>
+        <div class="actions-row">
+            <button class="btn" type="submit">Guardar datos</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Cambiar contraseña</h2>
+    <form method="post">
+        <input type="hidden" name="accion" value="password">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Contraseña actual</label>
+                <input type="password" name="actual" required>
+            </div>
+            <div class="form-group">
+                <label>Nueva contraseña</label>
+                <input type="password" name="nueva" required minlength="6">
+            </div>
+            <div class="form-group">
+                <label>Confirmar nueva contraseña</label>
+                <input type="password" name="confirmar" required minlength="6">
+            </div>
+        </div>
+        <div class="actions-row">
+            <button class="btn" type="submit">Actualizar contraseña</button>
+        </div>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Áreas / cursos</h2>
+    <p style="font-size:13px;color:#666">
+        Aquí puedes editar o eliminar las áreas curriculares existentes.
+        <strong>Eliminar un área borra también sus actividades y calificaciones.</strong>
+    </p>
+    {% for a in areas %}
+    <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap; padding:8px 0; border-bottom:1px solid var(--borde);">
+        <span style="width:20px; color:#888">{{ loop.index }}</span>
+        <form method="post" action="{{ url_for('area_editar', id=a.id) }}" style="display:flex; gap:8px; flex:1; flex-wrap:wrap;">
+            <input type="text" name="nombre" value="{{ a.nombre }}" required style="flex:2; min-width:200px">
+            <input type="text" name="codigo" value="{{ a.codigo }}" required style="width:110px">
+            <button class="btn btn-sm" type="submit">Guardar</button>
+        </form>
+        <form method="post" action="{{ url_for('area_eliminar', id=a.id) }}"
+              onsubmit="return confirm('¿Eliminar el área \'{{ a.nombre }}\'? Esto eliminará también todas sus actividades y calificaciones registradas. Esta acción no se puede deshacer.');">
+            <button class="btn btn-sm btn-danger" type="submit">Eliminar</button>
+        </form>
+    </div>
+    {% endfor %}
+
+    <h3>Agregar nueva área / curso</h3>
+    <form method="post" action="{{ url_for('area_nueva') }}" style="display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap;">
+        <div class="form-group" style="margin-bottom:0">
+            <label>Nombre</label>
+            <input type="text" name="nombre" placeholder="Ej. Idioma Maya Kʼicheʼ" required>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+            <label>Código</label>
+            <input type="text" name="codigo" placeholder="Ej. L1-KIC" required style="width:120px">
+        </div>
+        <button class="btn" type="submit">Agregar</button>
+    </form>
+</div>
+{% endblock %}

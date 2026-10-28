@@ -1,0 +1,36 @@
+{# Membrete institucional para impresión.
+   Variables esperadas (todas opcionales salvo config, ya global):
+   - doc_unidad: texto para "UNIDAD" (ej. nombre del bloque)
+   - doc_area: texto para "AREA" (ej. nombre del área)
+   - doc_grado_seccion: texto para "GRADO Y SECCIÓN" (ej. "Segundo A")
+#}
+<div class="print-header">
+    <table class="membrete-table">
+        <tr>
+            <td class="membrete-logo">
+                <img src="https://4.bp.blogspot.com/-Tj2y8R-oFFM/WrmMS0FMhuI/AAAAAAAAAlk/ytfJ9REOwU4m-Nokokh23OYEuT4SZ0odgCLcBGAs/s400/LOGO-GOBIERNO-DE-GUATEMALA-PAGINA-WEB-OCRET.png" alt="Gobierno de Guatemala">
+            </td>
+            <td class="membrete-titulos">
+                <div>{{ config.get('ministerio','MINISTERIO DE EDUCACIÓN') }}</div>
+                <div>{{ config.get('direccion_departamental','DIRECCIÓN DEPARTAMENTAL DE EDUCACIÓN') }}</div>
+                <div>{{ config.get('supervision_educativa','SUPERVISIÓN EDUCATIVA') }}</div>
+                <div>{{ config.get('distrito_escolar','DISTRITO ESCOLAR No. 07-01-04') }}</div>
+            </td>
+            <td class="membrete-logo">
+                <img src="https://albakeneth.gob.gt/assets/img/media/footer/logo-gob.png" alt="Gobierno de la República">
+            </td>
+        </tr>
+    </table>
+
+    <p class="membrete-escuela"><u>{{ config.get('nombre_establecimiento','') }}</u></p>
+
+    <table class="membrete-datos">
+        <tr>
+            <td><strong>MAESTRO(A):</strong> {{ config.get('nombre_docente','') }}</td>
+            <td><strong>GRADO Y SECCIÓN:</strong> {{ doc_grado_seccion or (config.get('grado','') ~ ' ' ~ config.get('seccion','')) }}</td>
+            <td><strong>UNIDAD:</strong> {{ doc_unidad or '—' }}</td>
+            <td><strong>ÁREA:</strong> {{ doc_area or '—' }}</td>
+        </tr>
+    </table>
+    <hr class="membrete-linea">
+</div>

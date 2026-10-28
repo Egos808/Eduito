@@ -1,0 +1,12 @@
+Coloca aquí estas dos imágenes (con estos nombres exactos, respetando mayúsculas):
+
+1. LogEsc.png   -> el escudo/logo de la escuela (el que aparece en la portada de la
+                   tarjeta de calificaciones).
+2. Boys.jpg     -> la ilustración de los niños con bloques de letras.
+
+Una vez que copies los dos archivos en esta carpeta (reemplazando este archivo si
+hace falta), la Boleta de Calificaciones (Reportes → Boleta de Calificaciones)
+las mostrará automáticamente en la portada, sin tocar ningún código.
+
+Si alguna de las imágenes no está presente, esa zona de la portada simplemente
+queda en blanco (no rompe la página).

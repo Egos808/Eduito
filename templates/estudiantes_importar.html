@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Importar estudiantes{% endblock %}
+{% block content %}
+<h1>Importar estudiantes desde Excel</h1>
+
+<div class="card">
+    <p>
+        En Excel, organiza tus columnas exactamente así (sin encabezados) y selecciona
+        las celdas de <strong>Clave</strong>, <strong>Nombres</strong> y <strong>Apellidos</strong>:
+    </p>
+    <table style="max-width:420px; margin-bottom:14px;">
+        <tr><th>Clave</th><th>Nombres</th><th>Apellidos</th></tr>
+        <tr><td>23</td><td>Juan Jesús</td><td>Vásquez Cúaq</td></tr>
+        <tr><td>24</td><td>Darly Dayana Semeona</td><td>Yax Yacón</td></tr>
+    </table>
+    <p style="font-size:13px;color:#666">
+        Copia esas celdas (Ctrl+C) y pégalas (Ctrl+V) directamente en el siguiente cuadro:
+        cada fila de Excel se convertirá en una línea, y las columnas se separan solas.
+    </p>
+
+    <form method="post">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Grado (para todos los importados)</label>
+                <input type="text" name="grado" value="{{ cfg.get('grado','Segundo') }}">
+            </div>
+            <div class="form-group">
+                <label>Sección (para todos los importados)</label>
+                <input type="text" name="seccion" value="{{ cfg.get('seccion','A') }}">
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Pega aquí los datos copiados de Excel</label>
+            <textarea name="datos" rows="14" placeholder="23&#9;Juan Jesús&#9;Vásquez Cúaq
+24&#9;Darly Dayana Semeona&#9;Yax Yacón" style="font-family:monospace; font-size:13px;" required></textarea>
+        </div>
+        <div class="actions-row">
+            <button class="btn" type="submit">Importar</button>
+            <a class="btn btn-secondary" href="{{ url_for('estudiantes_lista') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Editar' if estudiante else 'Nuevo' }} estudiante{% endblock %}
+{% block content %}
+<h1>{{ 'Editar estudiante' if estudiante else 'Nuevo estudiante' }}</h1>
+<div class="card">
+<form method="post">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Clave</label>
+            <input type="text" name="clave" required value="{{ estudiante.clave if estudiante else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Nombres</label>
+            <input type="text" name="nombres" required value="{{ estudiante.nombres if estudiante else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Apellidos</label>
+            <input type="text" name="apellidos" required value="{{ estudiante.apellidos if estudiante else '' }}">
+        </div>
+        <div class="form-group">
+            <label>Grado</label>
+            <input type="text" name="grado" required value="{{ estudiante.grado if estudiante else 'Segundo Grado' }}">
+        </div>
+        <div class="form-group">
+            <label>Sección</label>
+            <input type="text" name="seccion" required value="{{ estudiante.seccion if estudiante else 'A' }}">
+        </div>
+    </div>
+    <div class="actions-row">
+        <button class="btn" type="submit">Guardar</button>
+        <a class="btn btn-secondary" href="{{ url_for('estudiantes_lista') }}">Cancelar</a>
+    </div>
+</form>
+</div>
+{% endblock %}

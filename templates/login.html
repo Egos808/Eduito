@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="login-wrap">
+  <div class="login-box">
+    <h1>Sistema de Gestión Académica</h1>
+    <div class="sub">{{ config.get('nombre_establecimiento','') }}</div>
+    <form method="post">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" name="usuario" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" name="contrasena" required>
+      </div>
+      <button class="btn" style="width:100%" type="submit">Ingresar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Panel principal{% endblock %}
+{% block content %}
+<h1>Bienvenido, {{ docente_nombre }}</h1>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="num">{{ stats.estudiantes }}</div>
+        <div class="label">Estudiantes activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="num">{{ stats.asistencia_hoy }}</div>
+        <div class="label">Asistencias hoy</div>
+    </div>
+    <div class="stat-card">
+        <div class="num">{{ stats.actividades }}</div>
+        <div class="label">Actividades registradas</div>
+    </div>
+    <div class="stat-card">
+        <div class="num">{{ stats.calificaciones }}</div>
+        <div class="label">Calificaciones ingresadas</div>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Bloques académicos</h2>
+    <table>
+        <tr><th>Bloque</th><th>Fecha inicio</th><th>Fecha fin</th></tr>
+        {% for b in bloques %}
+        <tr>
+            <td>{{ b.nombre }}</td>
+            <td>{{ b.fecha_inicio or '—' }}</td>
+            <td>{{ b.fecha_fin or '—' }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="actions-row">
+        <a class="btn btn-sm" href="{{ url_for('bloques') }}">Configurar fechas</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Accesos rápidos</h2>
+    <div class="actions-row">
+        <a class="btn" href="{{ url_for('estudiante_nuevo') }}">+ Nuevo estudiante</a>
+        <a class="btn" href="{{ url_for('actividad_nueva') }}">+ Nueva actividad</a>
+        <a class="btn btn-secondary" href="{{ url_for('asistencia') }}">Tomar asistencia</a>
+        <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Ver reportes</a>
+    </div>
+</div>
+{% endblock %}

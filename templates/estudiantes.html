@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Estudiantes{% endblock %}
+{% block content %}
+<h1>Estudiantes</h1>
+
+<div class="toolbar">
+    <form method="get">
+        <input type="text" name="q" placeholder="Buscar por nombre, apellido o clave" value="{{ buscar }}">
+        <button class="btn btn-sm" type="submit">Buscar</button>
+        {% if buscar %}<a class="btn btn-sm btn-secondary" href="{{ url_for('estudiantes_lista') }}">Limpiar</a>{% endif %}
+    </form>
+    <div style="display:flex; gap:8px;">
+        <a class="btn btn-secondary" href="{{ url_for('estudiantes_importar') }}">Importar desde Excel</a>
+        <a class="btn" href="{{ url_for('estudiante_nuevo') }}">+ Nuevo estudiante</a>
+    </div>
+</div>
+
+<table>
+    <tr>
+        <th>Clave</th><th>Apellidos</th><th>Nombres</th><th>Grado</th><th>Sección</th><th>Estado</th><th></th>
+    </tr>
+    {% for e in estudiantes %}
+    <tr>
+        <td>{{ e.clave }}</td>
+        <td>{{ e.apellidos }}</td>
+        <td>{{ e.nombres }}</td>
+        <td>{{ e.grado }}</td>
+        <td>{{ e.seccion }}</td>
+        <td><span class="badge badge-{{ e.estado }}">{{ e.estado }}</span></td>
+        <td>
+            <a class="btn btn-sm" href="{{ url_for('estudiante_editar', id=e.id) }}">Editar</a>
+            <a class="btn btn-sm btn-secondary" href="{{ url_for('estudiante_desactivar', id=e.id) }}">
+                {{ 'Desactivar' if e.estado == 'activo' else 'Activar' }}
+            </a>
+            <form method="post" action="{{ url_for('estudiante_eliminar', id=e.id) }}" style="display:inline"
+                  onsubmit="return confirm('¿Eliminar PERMANENTEMENTE a {{ e.nombres }} {{ e.apellidos }}? Se borrarán también sus calificaciones, asistencias y evaluaciones. Esta acción no se puede deshacer.');">
+                <button class="btn btn-sm btn-danger" type="submit">Eliminar</button>
+            </form>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="7">No hay estudiantes registrados.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

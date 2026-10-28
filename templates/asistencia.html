@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Asistencia{% endblock %}
+{% block content %}
+<h1>Asistencia</h1>
+
+<div class="toolbar">
+    <form method="get">
+        <label style="margin-right:6px">Fecha:</label>
+        <input type="date" name="fecha" value="{{ fecha }}" onchange="this.form.submit()">
+    </form>
+    <a class="btn btn-secondary" href="{{ url_for('asistencia_resumen') }}">Ver resumen general</a>
+    {% if estados or dia_no_lectivo %}
+    <form method="post" action="{{ url_for('asistencia_eliminar') }}"
+          onsubmit="return confirm('¿Eliminar todo el registro de asistencia del {{ fecha }}? Esta acción no se puede deshacer.');">
+        <input type="hidden" name="fecha" value="{{ fecha }}">
+        <button class="btn btn-danger" type="submit">Eliminar registro de este día</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if dia_no_lectivo %}
+<div class="flash flash-error" style="margin-bottom:14px">
+    Este día está marcado como <strong>sin clases</strong> ({{ dia_no_lectivo.motivo }}).
+</div>
+{% endif %}
+
+<form method="post" id="form-asistencia">
+<input type="hidden" name="fecha" value="{{ fecha }}">
+
+<div class="card" style="margin-bottom:16px">
+    <label style="display:flex; align-items:center; gap:8px; font-weight:600;">
+        <input type="checkbox" name="no_hubo_clases" id="no_hubo_clases"
+               {{ 'checked' if dia_no_lectivo else '' }} onchange="toggleNoHuboClases()">
+        No hubo clases este día (feriado, actividad institucional, etc.)
+    </label>
+    <div class="form-group" id="motivo-wrap" style="margin-top:10px; {{ '' if dia_no_lectivo else 'display:none' }}">
+        <label>Motivo</label>
+        <input type="text" name="motivo" placeholder="Ej. Día feriado, actividad institucional..."
+               value="{{ dia_no_lectivo.motivo if dia_no_lectivo else '' }}">
+    </div>
+</div>
+
+<table id="tabla-asistencia">
+    <tr><th>No</th><th>Estudiante</th><th>Presente</th><th>Ausente</th><th>Justificado</th></tr>
+    {% for e in estudiantes %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td>{{ e.apellidos }}, {{ e.nombres }}</td>
+        <td style="text-align:center">
+            <input type="radio" name="estado_{{ e.id }}" value="Presente" class="radio-asistencia"
+                   {{ 'checked' if estados.get(e.id, 'Presente') == 'Presente' else '' }}>
+        </td>
+        <td style="text-align:center">
+            <input type="radio" name="estado_{{ e.id }}" value="Ausente" class="radio-asistencia"
+                   {{ 'checked' if estados.get(e.id) == 'Ausente' else '' }}>
+        </td>
+        <td style="text-align:center">
+            <input type="radio" name="estado_{{ e.id }}" value="Justificado" class="radio-asistencia"
+                   {{ 'checked' if estados.get(e.id) == 'Justificado' else '' }}>
+        </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+</table>
+<div class="actions-row">
+    <button class="btn" type="submit">Guardar</button>
+</div>
+</form>
+
+<script>
+function toggleNoHuboClases() {
+    const checked = document.getElementById('no_hubo_clases').checked;
+    document.getElementById('motivo-wrap').style.display = checked ? 'block' : 'none';
+    document.getElementById('tabla-asistencia').style.opacity = checked ? '0.4' : '1';
+    document.querySelectorAll('.radio-asistencia').forEach(r => r.disabled = checked);
+}
+toggleNoHuboClases();
+</script>
+{% endblock %}

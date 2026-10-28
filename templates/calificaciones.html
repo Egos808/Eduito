@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Calificar actividad{% endblock %}
+{% block content %}
+{% with doc_unidad=actividad.bloque_nombre, doc_area=actividad.area_nombre %}
+    {% include "_print_header.html" %}
+{% endwith %}
+
+<h1 class="no-print">{{ actividad.bloque_nombre }} — {{ actividad.nombre }} — {{ actividad.area_nombre }}</h1>
+<p>
+    <strong>Actividad:</strong> {{ actividad.nombre }} &nbsp;|&nbsp;
+    <strong>Tema:</strong> {{ actividad.tema or '—' }} &nbsp;|&nbsp;
+    <strong>Fecha:</strong> {{ actividad.fecha_ejecucion or '—' }} &nbsp;|&nbsp;
+    <strong>Valor de la actividad:</strong> {{ actividad.valor_total|numfmt }} puntos
+</p>
+
+<form method="post">
+<table class="compact">
+    <tr>
+        <th>No</th>
+        <th>Estudiante</th>
+        {% for a in aspectos %}<th>{{ a.nombre }}<br><small>({{ a.valor_maximo|numfmt }})</small></th>{% endfor %}
+        <th>Subtotal</th>
+    </tr>
+    {% for fila in filas %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td style="text-align:left">{{ fila.estudiante.apellidos }}, {{ fila.estudiante.nombres }}</td>
+        {% for a in aspectos %}
+        <td>
+            <input class="no-print" type="number" step="0.01" min="0" max="{{ a.valor_maximo }}"
+                   name="cal_{{ fila.estudiante.id }}_{{ a.id }}"
+                   value="{{ fila.valores[a.id] }}" style="width:60px;text-align:center">
+            <span class="print-only">{{ fila.valores[a.id]|numfmt }}</span>
+        </td>
+        {% endfor %}
+        <td class="subtotal-cell">{{ fila.subtotal|numfmt }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ aspectos|length + 3 }}">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+</table>
+
+<div class="actions-row no-print">
+    <button class="btn" type="submit">Guardar calificaciones</button>
+    <a class="btn btn-secondary" href="{{ url_for('actividades_lista') }}">Volver</a>
+    <button class="btn btn-secondary" type="button" onclick="window.print()">Imprimir</button>
+</div>
+</form>
+{% endblock %}

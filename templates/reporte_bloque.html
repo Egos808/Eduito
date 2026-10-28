@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Cuadro de calificaciones por bloque{% endblock %}
+{% block content %}
+{% with doc_unidad="Todos los bloques", doc_area="Todas las áreas", doc_grado_seccion=(estudiante.grado ~ ' ' ~ estudiante.seccion) %}
+    {% include "_print_header.html" %}
+{% endwith %}
+
+<h1 class="no-print">Cuadro de calificaciones por bloque</h1>
+<p><strong>Estudiante:</strong> {{ estudiante.apellidos }}, {{ estudiante.nombres }} (clave {{ estudiante.clave }})</p>
+
+<table class="compact">
+    <tr>
+        <th>Área</th>
+        {% for b in bloques %}<th>{{ b.nombre|upper }}</th>{% endfor %}
+        <th>Promedio</th>
+    </tr>
+    {% for fila in tabla %}
+    <tr>
+        <td style="text-align:left">{{ fila.area.nombre }}</td>
+        {% for b in bloques %}
+        <td>{{ fila.bloques[b.id]|numfmt if fila.bloques[b.id] is not none else '-' }}</td>
+        {% endfor %}
+        <td class="promedio-cell">{{ fila.promedio|numfmt if fila.promedio is not none else '-' }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<div class="actions-row no-print">
+    <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Volver</a>
+    <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+</div>
+{% endblock %}

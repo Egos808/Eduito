@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Detalle de asistencia{% endblock %}
+{% block content %}
+<h1>Detalle de asistencia</h1>
+<p><strong>Estudiante:</strong> {{ estudiante.apellidos }}, {{ estudiante.nombres }} (clave {{ estudiante.clave }})</p>
+
+<div class="card">
+<table>
+    <tr><th>Fecha</th><th>Día de la semana</th><th>Estado</th></tr>
+    {% for d in detalle %}
+    <tr>
+        <td>{{ d.fecha }}</td>
+        <td>{{ d.dia_semana }}</td>
+        <td><span class="badge badge-{{ d.estado|lower }}">{{ d.estado }}</span></td>
+    </tr>
+    {% else %}
+    <tr><td colspan="3">Todavía no hay registros de asistencia para este estudiante.</td></tr>
+    {% endfor %}
+</table>
+</div>
+
+<a class="btn btn-secondary no-print" href="{{ url_for('asistencia_resumen') }}">Volver al resumen</a>
+{% endblock %}

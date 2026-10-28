@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Sistema de Gestión Académica{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+{% if session.get('usuario_id') %}
+<header class="topbar no-print">
+    <div class="brand">
+        <span class="brand-title">SISTEMA DE GESTIÓN ACADÉMICA</span>
+        <span class="brand-sub">{{ config.get('nombre_establecimiento','') }}</span>
+    </div>
+    <nav>
+        <a href="{{ url_for('dashboard') }}">Inicio</a>
+        <a href="{{ url_for('estudiantes_lista') }}">Estudiantes</a>
+        <a href="{{ url_for('bloques') }}">Bloques</a>
+        <a href="{{ url_for('actividades_lista') }}">Actividades</a>
+        <a href="{{ url_for('asistencia') }}">Asistencia</a>
+        <a href="{{ url_for('actitudinal') }}">Actitudinal</a>
+        <a href="{{ url_for('reportes_index') }}">Reportes</a>
+    </nav>
+    <div class="user-box">
+        <a href="{{ url_for('configuracion') }}" title="Mi cuenta y áreas/cursos">⚙ {{ docente_nombre }}</a>
+        <a href="{{ url_for('logout') }}" class="logout">Salir</a>
+    </div>
+</header>
+{% endif %}
+
+<main class="container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="flash-wrap no-print">
+            {% for category, message in messages %}
+                <div class="flash flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+</body>
+</html>

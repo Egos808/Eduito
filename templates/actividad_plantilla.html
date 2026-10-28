@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Generar actividades predeterminadas{% endblock %}
+{% block content %}
+<h1>Generar actividades predeterminadas</h1>
+
+<div class="card">
+    <p>
+        Esto crea de una vez las <strong>5 actividades</strong> que normalmente componen un bloque para un área:
+    </p>
+    <ul style="font-size:14px;color:#444">
+        <li>4 actividades con los aspectos <strong>Producción, Proceso, Cantidad y Limpieza</strong> (5 pts cada uno = 20 pts c/u, editable después)</li>
+        <li>1 actividad "Evaluación" con una sola nota de 20 pts</li>
+        <li><strong>Total del bloque: 100 puntos</strong></li>
+    </ul>
+    <p style="font-size:13px;color:#666">
+        Si eliges <strong>"Todas las áreas"</strong>, se generarán estas 5 actividades para
+        cada área existente dentro del bloque seleccionado. Si eliges un área específica,
+        solo se generarán para esa área. Si un área ya tiene actividades en ese bloque, se omite
+        para evitar duplicados.
+    </p>
+
+    <form method="post">
+        <div class="form-grid">
+            <div class="form-group">
+                <label>Bloque</label>
+                <select name="bloque_id" required>
+                    {% for b in bloques %}
+                    <option value="{{ b.id }}" {{ 'selected' if default_bloque_id == b.id else '' }}>{{ b.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Área</label>
+                <select name="area_id" required>
+                    <option value="all" {{ 'selected' if not default_area_id else '' }}>Todas las áreas (crea 5 en cada una)</option>
+                    {% for a in areas %}
+                    <option value="{{ a.id }}" {{ 'selected' if default_area_id == a.id else '' }}>{{ a.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <div class="actions-row">
+            <button class="btn" type="submit">Generar 5 actividades</button>
+            <a class="btn btn-secondary" href="{{ url_for('actividades_lista') }}">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

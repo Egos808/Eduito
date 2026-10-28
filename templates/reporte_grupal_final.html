@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Reporte grupal final{% endblock %}
+{% block content %}
+{% with doc_unidad="Todos los bloques", doc_area="Todas las áreas" %}
+    {% include "_print_header.html" %}
+{% endwith %}
+
+<h1 class="no-print">Reporte final del grupo</h1>
+
+<div style="overflow-x:auto">
+<table class="compact">
+    <tr>
+        <th>Estudiante</th>
+        {% for a in areas %}<th>{{ a.nombre }}</th>{% endfor %}
+        <th>Promedio general</th>
+    </tr>
+    {% for fila in filas %}
+    <tr>
+        <td style="text-align:left">{{ fila.estudiante.apellidos }}, {{ fila.estudiante.nombres }}</td>
+        {% for a in areas %}
+        <td>{{ fila.valores[a.id]|numfmt if fila.valores[a.id] is not none else '-' }}</td>
+        {% endfor %}
+        <td class="promedio-cell">{{ fila.promedio_general|numfmt if fila.promedio_general is not none else '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ areas|length + 2 }}">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+</table>
+</div>
+
+<div class="actions-row no-print">
+    <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Volver</a>
+    <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+</div>
+{% endblock %}

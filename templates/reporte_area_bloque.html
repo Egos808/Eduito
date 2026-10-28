@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block title %}Cuadro de calificaciones{% endblock %}
+{% block content %}
+{% with doc_unidad=bloque.nombre, doc_area=area.nombre %}
+    {% include "_print_header.html" %}
+{% endwith %}
+
+<h1 class="no-print">Cuadro de calificaciones — {{ area.nombre }} — {{ bloque.nombre }}</h1>
+
+<form method="get" class="no-print" style="display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
+    <label>Área:</label>
+    <select name="area_id" onchange="this.form.submit()">
+        {% for a in areas %}
+        <option value="{{ a.id }}" {{ 'selected' if a.id == area.id else '' }}>{{ a.nombre }}</option>
+        {% endfor %}
+    </select>
+    <label>Bloque:</label>
+    <select name="bloque_id" onchange="this.form.submit()">
+        {% for b in bloques %}
+        <option value="{{ b.id }}" {{ 'selected' if b.id == bloque.id else '' }}>{{ b.nombre }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if not actividades_con_aspectos %}
+<div class="card">
+    <p>No hay actividades registradas para <strong>{{ area.nombre }}</strong> en el <strong>{{ bloque.nombre }}</strong>.</p>
+    <div class="actions-row">
+        <a class="btn" href="{{ url_for('actividad_plantilla', bloque_id=bloque.id, area_id=area.id) }}">Generar plantilla (5 actividades)</a>
+        <a class="btn btn-secondary" href="{{ url_for('actividad_nueva', bloque_id=bloque.id, area_id=area.id) }}">Crear actividad manualmente</a>
+    </div>
+</div>
+{% else %}
+<div style="overflow-x:auto">
+<table class="compact reporte-area-bloque">
+    <thead>
+    <tr>
+        <th rowspan="2">No</th>
+        <th rowspan="2">Estudiantes</th>
+        {% for grupo in actividades_con_aspectos %}
+        <th colspan="{{ grupo.aspectos|length if grupo.aspectos else 1 }}" class="info-actividad">
+            <div><strong>TEMA:</strong> {{ grupo.actividad.tema or '—' }}</div>
+            <div><strong>FECHA:</strong> {{ grupo.actividad.fecha_ejecucion or '—' }}</div>
+            <div><strong>ACTIVIDAD:</strong> {{ grupo.actividad.nombre }}</div>
+            <div><strong>VALOR:</strong> {{ grupo.actividad.valor_total|numfmt }} pts</div>
+        </th>
+        <th rowspan="2" class="subtotal-header">SUBTOTAL</th>
+        {% endfor %}
+        <th rowspan="2" class="total-header">TOTAL<br>{{ total_maximo|numfmt }}</th>
+    </tr>
+    <tr>
+        {% for grupo in actividades_con_aspectos %}
+            {% for asp in grupo.aspectos %}
+            <th class="aspecto-valor">{{ asp.valor_maximo|numfmt }}</th>
+            {% else %}
+            <th class="aspecto-valor">—</th>
+            {% endfor %}
+        {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for fila in filas %}
+    <tr>
+        <td>{{ loop.index }}</td>
+        <td style="text-align:left">{{ fila.estudiante.apellidos }}, {{ fila.estudiante.nombres }}</td>
+        {% for grupo in fila.grupos %}
+            {% for v in grupo.valores %}
+            <td>{{ v|numfmt }}</td>
+            {% endfor %}
+            <td class="subtotal-cell">{{ grupo.subtotal|numfmt }}</td>
+        {% endfor %}
+        <td class="total-cell">{{ fila.total|numfmt }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="99">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+    </tbody>
+</table>
+</div>
+
+<div class="firmas-row">
+    <div>_____________________________<br>Maestro(a) de grado</div>
+    <div>_____________________________<br>Comisión de evaluación</div>
+    <div>_____________________________<br>Director(a) del establecimiento</div>
+</div>
+
+<div class="actions-row no-print" style="margin-top:20px">
+    <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Volver</a>
+    <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+</div>
+{% endif %}
+{% endblock %}

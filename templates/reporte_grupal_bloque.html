@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Reporte grupal por bloque{% endblock %}
+{% block content %}
+{% with doc_unidad=bloque_actual.nombre, doc_area="Todas las áreas" %}
+    {% include "_print_header.html" %}
+{% endwith %}
+
+<h1 class="no-print">Reporte grupal — {{ bloque_actual.nombre }}</h1>
+
+<form method="get" class="no-print" style="margin-bottom:14px">
+    <label>Bloque: </label>
+    <select name="bloque_id" onchange="this.form.submit()">
+        {% for b in bloques %}
+        <option value="{{ b.id }}" {{ 'selected' if bloque_id == b.id else '' }}>{{ b.nombre }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<div style="overflow-x:auto">
+<table class="compact">
+    <tr>
+        <th>Estudiante</th>
+        {% for a in areas %}<th>{{ a.nombre }}</th>{% endfor %}
+        <th>Promedio</th>
+    </tr>
+    {% for fila in filas %}
+    <tr>
+        <td style="text-align:left">{{ fila.estudiante.apellidos }}, {{ fila.estudiante.nombres }}</td>
+        {% for a in areas %}
+        <td>{{ fila.valores[a.id]|numfmt if fila.valores[a.id] is not none else '-' }}</td>
+        {% endfor %}
+        <td class="promedio-cell">{{ fila.promedio|numfmt if fila.promedio is not none else '-' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ areas|length + 2 }}">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+</table>
+</div>
+
+<div class="actions-row no-print">
+    <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Volver</a>
+    <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+</div>
+{% endblock %}

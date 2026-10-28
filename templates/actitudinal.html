@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Evaluación actitudinal{% endblock %}
+{% block content %}
+<h1>Evaluación actitudinal</h1>
+
+<form method="get" class="no-print" style="margin-bottom:14px">
+    <label>Bloque: </label>
+    <select name="bloque_id" onchange="this.form.submit()">
+        {% for b in bloques %}
+        <option value="{{ b.id }}" {{ 'selected' if bloque_id == b.id else '' }}>{{ b.nombre }}</option>
+        {% endfor %}
+    </select>
+</form>
+
+<form method="post">
+<input type="hidden" name="bloque_id" value="{{ bloque_id }}">
+<div style="overflow-x:auto">
+<table class="compact">
+    <tr>
+        <th>Estudiante</th>
+        {% for c in criterios %}<th>{{ c.nombre }}</th>{% endfor %}
+    </tr>
+    {% for e in estudiantes %}
+    <tr>
+        <td style="text-align:left">{{ e.apellidos }}, {{ e.nombres }}</td>
+        {% for c in criterios %}
+        <td>
+            <select name="crit_{{ e.id }}_{{ c.id }}">
+                <option value="Si" {{ 'selected' if matriz.get(e.id, {}).get(c.id) == 'Si' else '' }}>Sí</option>
+                <option value="No" {{ 'selected' if matriz.get(e.id, {}).get(c.id, 'No') == 'No' else '' }}>No</option>
+            </select>
+        </td>
+        {% endfor %}
+    </tr>
+    {% else %}
+    <tr><td colspan="{{ criterios|length + 1 }}">No hay estudiantes activos registrados.</td></tr>
+    {% endfor %}
+</table>
+</div>
+<div class="actions-row no-print">
+    <button class="btn" type="submit">Guardar evaluación</button>
+</div>
+</form>
+{% endblock %}

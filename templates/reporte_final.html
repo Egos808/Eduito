@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block title %}Boleta de Calificaciones{% endblock %}
+{% block content %}
+<h1 class="no-print">Boleta de Calificaciones</h1>
+
+<div class="no-print" style="display:flex; gap:10px; align-items:center; margin-bottom:16px; flex-wrap:wrap;">
+    <label>Estudiante:</label>
+    <select onchange="window.location='{{ url_for('reporte_final', estudiante_id=0) }}'.replace('0', this.value)">
+        {% for e in todos_estudiantes %}
+        <option value="{{ e.id }}" {{ 'selected' if e.id == estudiante.id else '' }}>{{ e.apellidos }}, {{ e.nombres }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn" type="button" onclick="window.print()">Imprimir</button>
+    <a class="btn btn-secondary" href="{{ url_for('reportes_index') }}">Volver</a>
+</div>
+
+<div class="boleta-wrap">
+
+<!-- ===================== HOJA 1: portada (mitad en blanco + mitad con datos) ===================== -->
+<div class="boleta-hoja">
+    <div class="boleta-mitad boleta-blank"></div>
+    <div class="boleta-mitad boleta-portada">
+        <img class="boleta-logo" src="{{ url_for('static', filename='img/LogEsc.png') }}"
+             alt="Logo de la escuela" onerror="this.style.display='none'">
+        <p class="boleta-escuela">{{ config.get('nombre_establecimiento','') }}</p>
+        <p class="boleta-titulo">TARJETA DE CALIFICACIONES</p>
+
+        <div class="boleta-portada-datos">
+            <img class="boleta-ilustracion" src="{{ url_for('static', filename='img/Boys.jpg') }}"
+                 alt="" onerror="this.style.display='none'">
+            <p class="boleta-clave">Clave: <u>{{ estudiante.clave }}</u></p>
+        </div>
+
+        <div class="boleta-caja">{{ estudiante.apellidos }}, {{ estudiante.nombres }}</div>
+        <p class="boleta-caption">Nombre del Estudiante</p>
+
+        <div class="boleta-caja">{{ config.get('nombre_docente','') }}</div>
+        <p class="boleta-caption">Nombre del Docente</p>
+
+        <p class="boleta-grado"><strong>Grado:</strong> {{ estudiante.grado }}</p>
+
+        <p class="boleta-ciclo">CICLO ESCOLAR {{ config.get('ciclo_escolar','') }}</p>
+    </div>
+</div>
+
+<!-- ===================== HOJA 2: notas + actitudinal + firmas ===================== -->
+<div class="boleta-hoja">
+    <div class="boleta-mitad boleta-notas">
+        <table class="boleta-tabla-notas">
+            <tr>
+                <th colspan="2">Áreas Curriculares</th>
+                <th>I<br>BLOQUE</th>
+                <th>II<br>BLOQUE</th>
+                <th>III<br>BLOQUE</th>
+                <th>IV<br>BLOQUE</th>
+                <th>PROMEDIO</th>
+            </tr>
+            {% for fila in tabla %}
+            <tr>
+                <td class="boleta-num">{{ loop.index }}.</td>
+                <td class="boleta-area-nombre">{{ fila.area.nombre }}</td>
+                {% for b in bloques %}
+                <td>{{ fila.bloques[b.id]|numfmt if fila.bloques[b.id] is not none else '' }}</td>
+                {% endfor %}
+                <td>{{ fila.promedio|numfmt if fila.promedio is not none else '' }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+    <div class="boleta-mitad boleta-actitud">
+        <table class="boleta-tabla-actitud">
+            <tr>
+                <th rowspan="2"></th>
+                <th colspan="2">I<br>BLOQUE</th>
+                <th colspan="2">II<br>BLOQUE</th>
+                <th colspan="2">III<br>BLOQUE</th>
+                <th colspan="2">IV<br>BLOQUE</th>
+            </tr>
+            <tr>
+                {% for b in bloques %}<th>SI</th><th>NO</th>{% endfor %}
+            </tr>
+            {% for c in criterios %}
+            <tr>
+                <td class="boleta-criterio">{{ c.nombre }}</td>
+                {% for b in bloques %}
+                    {% set resultado = matriz_actitud.get(c.id, {}).get(b.id) %}
+                    <td>{{ 'X' if resultado == 'Si' else '' }}</td>
+                    <td>{{ 'X' if resultado == 'No' else '' }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </table>
+
+        <div class="boleta-firmas">
+            <div class="boleta-firmas-linea">
+                <span>F_____________________________</span>
+                <span>Vo.Bo. _____________________________</span>
+            </div>
+            <div class="boleta-firmas-nombres">
+                <span>{{ config.get('nombre_docente','') }}</span>
+                <span>{{ config.get('nombre_directora','') }}</span>
+            </div>
+            <div class="boleta-firmas-cargos">
+                <span>Docente</span>
+                <span>directora del Establecimiento</span>
+            </div>
+        </div>
+
+        <p class="boleta-firma-padres-titulo"><strong>FIRMA DEL PADRE, MADRE O ENCARGADO:</strong></p>
+        <table class="boleta-tabla-firmas">
+            <tr><th>BLOQUE</th><th>NOMBRE</th><th>FIRMA</th></tr>
+            {% for b in bloques %}
+            <tr><td>{{ ['I','II','III','IV'][loop.index0] }}</td><td></td><td></td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+</div>
+{% endblock %}

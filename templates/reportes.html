@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block content %}
+<h1>Reportes</h1>
+
+<div class="card">
+    <h2>Reporte oficial por área y bloque</h2>
+    <p style="font-size:13px;color:#666">
+        Es el formato oficial para entregar: muestra todas las actividades de un área dentro de
+        un bloque, con el subtotal de cada una y el total sobre 100, listo para imprimir en horizontal.
+    </p>
+    <form method="get" action="{{ url_for('reporte_area_bloque') }}" style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+        <label>Área:</label>
+        <select name="area_id">
+            {% for a in areas %}<option value="{{ a.id }}">{{ a.nombre }}</option>{% endfor %}
+        </select>
+        <label>Bloque:</label>
+        <select name="bloque_id">
+            {% for b in bloques %}<option value="{{ b.id }}">{{ b.nombre }}</option>{% endfor %}
+        </select>
+        <button class="btn" type="submit">Ver / imprimir</button>
+    </form>
+</div>
+
+<div class="card">
+    <h2>Boleta de Calificaciones</h2>
+    <p style="font-size:13px;color:#666">Muestran la información de un solo estudiante.</p>
+    <table>
+        <tr><th>Estudiante</th><th></th><th></th></tr>
+        {% for e in estudiantes %}
+        <tr>
+            <td>{{ e.apellidos }}, {{ e.nombres }}</td>
+            <td><a class="btn btn-sm" href="{{ url_for('reporte_bloque', estudiante_id=e.id) }}">Cuadro por bloque</a></td>
+            <td><a class="btn btn-sm btn-secondary" href="{{ url_for('reporte_final', estudiante_id=e.id) }}">Reporte final</a></td>
+        </tr>
+        {% else %}
+        <tr><td colspan="3">No hay estudiantes activos registrados.</td></tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div class="card">
+    <h2>Reportes por grupo</h2>
+    <p style="font-size:13px;color:#666">Muestran a todos los estudiantes registrados en una sola tabla.</p>
+    <form method="get" action="{{ url_for('reporte_grupal_bloque') }}" style="display:flex; gap:8px; align-items:center; margin-bottom:12px;">
+        <label>Cuadro grupal de un bloque:</label>
+        <select name="bloque_id">
+            {% for b in bloques %}<option value="{{ b.id }}">{{ b.nombre }}</option>{% endfor %}
+        </select>
+        <button class="btn btn-sm" type="submit">Ver</button>
+    </form>
+    <a class="btn btn-secondary" href="{{ url_for('reporte_grupal_final') }}">Reporte final de todo el grupo</a>
+</div>
+{% endblock %}

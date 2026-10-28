@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Editar actividad{% endblock %}
+{% block content %}
+<h1>Editar actividad</h1>
+<p style="color:#666">{{ actividad.bloque_nombre }} — {{ actividad.area_nombre }}</p>
+
+<div class="card">
+<form method="post">
+    <div class="form-grid">
+        <div class="form-group">
+            <label>Nombre de la actividad</label>
+            <input type="text" name="nombre" required value="{{ actividad.nombre }}">
+        </div>
+        <div class="form-group">
+            <label>Tema</label>
+            <input type="text" name="tema" value="{{ actividad.tema or '' }}" placeholder="Ej. Colores primarios">
+        </div>
+        <div class="form-group">
+            <label>Fecha de ejecución</label>
+            <input type="date" name="fecha_ejecucion" value="{{ actividad.fecha_ejecucion or '' }}">
+        </div>
+    </div>
+
+    <h3>Aspectos a calificar</h3>
+    <p style="font-size:13px;color:#666">
+        Puedes renombrar cada aspecto o cambiar su valor. El valor total de la actividad se recalcula solo.
+        Para agregar o quitar aspectos, crea la actividad de nuevo desde "+ Nueva actividad".
+    </p>
+    <div class="aspectos-list">
+        {% for a in aspectos %}
+        <div class="aspecto-row">
+            <input type="hidden" name="aspecto_id" value="{{ a.id }}">
+            <input type="text" name="aspecto_nombre" value="{{ a.nombre }}" required>
+            <input type="number" name="aspecto_valor" value="{{ a.valor_maximo }}" step="0.01" required>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="actions-row">
+        <button class="btn" type="submit">Guardar cambios</button>
+        <a class="btn btn-secondary" href="{{ url_for('actividades_lista', bloque_id=actividad.bloque_id) }}">Cancelar</a>
+    </div>
+</form>
+</div>
+{% endblock %}
